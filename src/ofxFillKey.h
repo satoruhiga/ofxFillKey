@@ -113,6 +113,8 @@ public:
 	float getWidth() { return fbo.getWidth(); }
 	float getHeight() { return fbo.getHeight(); }
 	
+	ofFbo& getFbo() { return fbo; }
+	
 private:
 	
 	ofFbo fbo;
