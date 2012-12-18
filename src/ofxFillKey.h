@@ -110,6 +110,9 @@ public:
 		glBlendFuncSeparate(src, dst, GL_SRC_ALPHA, GL_ONE);
 	}
 	
+	float getWidth() { return fbo.getWidth(); }
+	float getHeight() { return fbo.getHeight(); }
+	
 private:
 	
 	ofFbo fbo;
