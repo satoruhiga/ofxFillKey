@@ -17,7 +17,7 @@ public:
 			 uniform sampler2DRect tex;
 			 void main()
 			 {
-				 float alpha_gain = 2.;
+				 float alpha_gain = 1.;
 				 float a = texture2DRect(tex, gl_TexCoord[0].xy).a * alpha_gain;
 				 gl_FragColor = vec4(a, a, a, 1.0);
 			 }
