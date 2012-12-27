@@ -34,9 +34,8 @@ public:
 			 void main()
 			 {
 				 vec4 c = texture2DRect(tex, gl_TexCoord[0].xy);
-				 float a = c.a;
-				 a = clamp(a, 0., 1.);
-				 vec3 m = vec3(1., 1., 1.) * (1. - a);
+				 float b = max(max(c.r, c.g), c.b);
+				 vec3 m = vec3(1., 1., 1.) * (1. - b);
 				 vec3 s = c.rgb;
 				 gl_FragColor = vec4(s + m, 1.);
 			 }
