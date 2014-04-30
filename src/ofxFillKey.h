@@ -15,6 +15,10 @@ public:
 		s.numSamples = num_sample;
 		fbo.allocate(s);
 		
+		fbo.begin();
+		ofClear(0, 0);
+		fbo.end();
+		
 #define _S(src) #src
 		{
 			const char *fs = _S
@@ -55,7 +59,6 @@ public:
 			matte_shader.setupShaderFromSource(GL_FRAGMENT_SHADER, fs);
 			matte_shader.linkProgram();
 		}
-		
 #undef _S
 	}
 	
@@ -76,7 +79,7 @@ public:
 		glPopAttrib();
 	}
 	
-	void drawFill(int x = 0, int y = 0, int width = 0, int height = 0)
+	void drawFill(float x, float y, float width = 0, float height = 0)
 	{
 		if (width == 0) width = fbo.getWidth();
 		if (height == 0) height = fbo.getHeight();
@@ -92,7 +95,7 @@ public:
 		ofPopStyle();
 	}
 	
-	void drawKey(int x = 0, int y = 0, int width = 0, int height = 0)
+	void drawKey(float x, float y, float width = 0, float height = 0)
 	{
 		if (width == 0) width = fbo.getWidth();
 		if (height == 0) height = fbo.getHeight();
@@ -106,6 +109,14 @@ public:
 		alpha_shader.end();
 		
 		ofPopStyle();
+	}
+	
+	void draw(float x, float y, float width = 0, float height = 0)
+	{
+		if (width == 0) width = fbo.getWidth();
+		if (height == 0) height = fbo.getHeight();
+		
+		fbo.draw(x, y, width, height);
 	}
 	
 	static void setSeparateBlendMode()
