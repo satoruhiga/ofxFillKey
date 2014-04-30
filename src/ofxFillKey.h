@@ -6,9 +6,14 @@ class ofxFillKey
 {
 public:
 	
-	void setup(int width, int height)
+	void setup(int width, int height, int num_sample = 1)
 	{
-		fbo.allocate(width, height, GL_RGBA);
+		ofFbo::Settings s;
+		s.width = width;
+		s.height = height;
+		s.internalformat = GL_RGBA16F;
+		s.numSamples = num_sample;
+		fbo.allocate(s);
 		
 #define _S(src) #src
 		{
@@ -17,8 +22,7 @@ public:
 			 uniform sampler2DRect tex;
 			 void main()
 			 {
-				 float alpha_gain = 1.;
-				 float a = texture2DRect(tex, gl_TexCoord[0].xy).a * alpha_gain;
+				 float a = texture2DRect(tex, gl_TexCoord[0].xy).a;
 				 gl_FragColor = vec4(a, a, a, 1.0);
 			 }
 			 );
@@ -34,10 +38,17 @@ public:
 			 void main()
 			 {
 				 vec4 c = texture2DRect(tex, gl_TexCoord[0].xy);
-				 float b = max(max(c.r, c.g), c.b);
-				 vec3 m = vec3(1., 1., 1.) * (1. - b);
-				 vec3 s = c.rgb;
-				 gl_FragColor = vec4(s + m, 1.);
+				 float a = c.a;
+				 
+				 if (a == 0.)
+				 {
+					 gl_FragColor = vec4(1.);
+				 }
+				 else
+				 {
+					 vec3 m = c.rgb / a;
+					 gl_FragColor = vec4(m, 1.);
+				 }
 			 }
 			 );
 			
@@ -55,8 +66,6 @@ public:
 		ofPushStyle();
 		fbo.begin();
 		ofClear(0, 0);
-		
-		setSeparateBlendMode();
 	}
 	
 	void end()
@@ -77,9 +86,7 @@ public:
 		
 		matte_shader.begin();
 		matte_shader.setUniformTexture("tex", fbo.getTextureReference(), 1);
-		
 		fbo.draw(x, y, width, height);
-		
 		matte_shader.end();
 		
 		ofPopStyle();
@@ -101,7 +108,7 @@ public:
 		ofPopStyle();
 	}
 	
-	void setSeparateBlendMode()
+	static void setSeparateBlendMode()
 	{
 		int src, dst;
 		glGetIntegerv(GL_BLEND_SRC, &src);
