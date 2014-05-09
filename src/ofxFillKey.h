@@ -6,17 +6,17 @@ class ofxFillKey
 {
 public:
 	
-	void setup(int width, int height, int num_sample = 1)
+	void setup(int width, int height, int num_sample = 0)
 	{
 		ofFbo::Settings s;
 		s.width = width;
 		s.height = height;
-		s.internalformat = GL_RGBA16F;
+		s.internalformat = GL_RGBA32F;
 		s.numSamples = num_sample;
 		fbo.allocate(s);
 		
 		fbo.begin();
-		ofClear(0, 0);
+		ofClear(255, 0);
 		fbo.end();
 		
 #define _S(src) #src
@@ -44,13 +44,13 @@ public:
 				 vec4 c = texture2DRect(tex, gl_TexCoord[0].xy);
 				 float a = c.a;
 				 
-				 if (a == 0.)
+				 if (a >= 1.)
 				 {
-					 gl_FragColor = vec4(1.);
+					 gl_FragColor = vec4(c.rgb, 1.);
 				 }
 				 else
 				 {
-					 vec3 m = c.rgb / a;
+					 vec3 m = c.rgb;
 					 gl_FragColor = vec4(m, 1.);
 				 }
 			 }
@@ -68,7 +68,7 @@ public:
 		
 		ofPushStyle();
 		fbo.begin();
-		ofClear(0, 0);
+		ofClear(0);
 	}
 	
 	void end()
@@ -117,14 +117,6 @@ public:
 		if (height == 0) height = fbo.getHeight();
 		
 		fbo.draw(x, y, width, height);
-	}
-	
-	static void setSeparateBlendMode()
-	{
-		int src, dst;
-		glGetIntegerv(GL_BLEND_SRC, &src);
-		glGetIntegerv(GL_BLEND_DST, &dst);
-		glBlendFuncSeparate(src, dst, GL_SRC_ALPHA, GL_ONE);
 	}
 	
 	float getWidth() { return fbo.getWidth(); }
